@@ -10,7 +10,9 @@ function interpretComposerResults( { out, err, exitCode } ) {
 
 function makeProxyFunction( fn ) {
 	return async function( ...args ) {
-		const results = await compose[ fn ]( ...args );
+		const v2Available = ( await compose.v2.version() ).exitCode === 0;
+		const latestCompose = v2Available ? compose.v2 : compose;
+		const results = await latestCompose[ fn ]( ...args );
 		return interpretComposerResults( results );
 	};
 }
